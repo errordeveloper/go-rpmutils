@@ -89,7 +89,7 @@ func (pr *payloadReader) Next() (FileInfo, error) {
 			c.Close()
 		}
 		return nil, err
-	
+	}
 	var index int
 
 	//if hdr.IsStripped() {
