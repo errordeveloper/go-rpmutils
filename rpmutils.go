@@ -22,7 +22,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/sassoftware/go-rpmutils/cpio"
+	// "github.com/sassoftware/go-rpmutils/cpio"
+	"github.com/cavaliergopher/cpio"
 )
 
 // Rpm is an open RPM header and payload
@@ -57,14 +58,15 @@ func ReadRpm(f io.Reader) (*Rpm, error) {
 
 // ExpandPayload extracts the payload of a RPM to the specified directory
 func (rpm *Rpm) ExpandPayload(dest string) error {
-	pld, err := uncompressRpmPayloadReader(rpm.f, rpm.Header)
-	if err != nil {
-		return err
-	}
-	if c, ok := pld.(io.Closer); ok {
-		defer c.Close()
-	}
-	return cpio.Extract(pld, dest)
+	//pld, err := uncompressRpmPayloadReader(rpm.f, rpm.Header)
+	//if err != nil {
+	//	return err
+	//}
+	//if c, ok := pld.(io.Closer); ok {
+	//	defer c.Close()
+	//}
+	//return cpio.Extract(pld, dest)
+	return fmt.Errorf("ExpandPayload unimplemented")
 }
 
 // PayloadReader accesses the payload cpio archive within the RPM.

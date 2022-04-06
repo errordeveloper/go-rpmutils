@@ -126,12 +126,12 @@ func TestPayloadReader(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if hdr.Filesize() != 7 {
-		t.Fatalf("wrong file size %d", hdr.Filesize())
+	if hdr.Size != 7 {
+		t.Fatalf("wrong file size %d", hdr.Size)
 	}
 
-	if hdr.Filename() != "./config" {
-		t.Fatalf("wrong file name %s", hdr.Filename())
+	if hdr.Name != "./config" {
+		t.Fatalf("wrong file name %s", hdr.Name)
 	}
 }
 

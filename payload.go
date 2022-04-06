@@ -21,7 +21,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/sassoftware/go-rpmutils/cpio"
+	// "github.com/sassoftware/go-rpmutils/cpio"
+	"github.com/cavaliergopher/cpio"
 )
 
 // TODO version 2:
@@ -59,7 +60,7 @@ func newPayloadReader(r io.Reader, files []FileInfo) *payloadReader {
 		pr.files[i] = fileSt
 		pr.fileMap[fileSt.name] = i
 		switch fileSt.fileType() {
-		case cpio.S_ISREG:
+		case 0100000:
 			fileSizes[i] = fileSt.Size()
 			// all but the last file in a link group will have no contents. flag
 			// them so we don't try to read the nonexistent payload.
@@ -69,11 +70,11 @@ func newPayloadReader(r io.Reader, files []FileInfo) *payloadReader {
 				fileSizes[i-1] = 0
 			}
 			lastInode = ino
-		case cpio.S_ISLNK:
+		case 0120000:
 			fileSizes[i] = int64(len(fileSt.linkName))
 		}
 	}
-	pr.cr = cpio.NewReaderWithSizes(r, fileSizes)
+	pr.cr = cpio.NewReader(r)
 	return pr
 }
 
@@ -88,21 +89,22 @@ func (pr *payloadReader) Next() (FileInfo, error) {
 			c.Close()
 		}
 		return nil, err
-	}
+	
 	var index int
-	if hdr.IsStripped() {
-		index = hdr.Index()
-	} else {
-		var ok bool
-		name := hdr.Filename()
-		if len(name) > 1 && name[0] == '.' && name[1] == '/' {
-			name = name[1:]
-		}
-		index, ok = pr.fileMap[name]
-		if !ok {
-			return nil, fmt.Errorf("invalid file \"%s\" in payload", name)
-		}
+
+	//if hdr.IsStripped() {
+	//	index = hdr.Index()
+	//} else {
+	var ok bool
+	name := hdr.Name
+	if len(name) > 1 && name[0] == '.' && name[1] == '/' {
+		name = name[1:]
 	}
+	index, ok = pr.fileMap[name]
+	if !ok {
+		return nil, fmt.Errorf("invalid file \"%s\" in payload", name)
+	}
+	//}
 	if index >= len(pr.files) {
 		return nil, errors.New("invalid file index")
 	}
