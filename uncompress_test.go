@@ -124,7 +124,7 @@ func TestUncompressSizesAndChecksumsWithPayloadReader(t *testing.T) {
 
 			var file FileInfo
 			for _, f := range files {
-				if filepath.Join("/", h.Filename()) == f.Name() {
+				if filepath.Join("/", h.Name) == f.Name() {
 					file = f
 				}
 			}
